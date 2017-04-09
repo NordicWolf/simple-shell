@@ -1,24 +1,24 @@
 CC=gcc
-CFLAGS=-c -Wall
-LIBFLAGS=-lrt
-OBJS=shell.o main.o
+CFLAGS=-c -g -Wall
+LFLAGS=-lrt
+PARTS=shell.o main.o
 
-all: build exec
+# Directorios
+OBJ=obj
+SRC=src
+INC=include
 
-build:  $(OBJS)
-	$(CC) lib/* -o bin/shell.bin $(LIBFLAGS)
+all: build
 
-main.o: src/main.c
-	$(CC) $(CFLAGS) $^ -o lib/$@
+build:  $(PARTS)
+	@echo "Enlazando"
+	@$(CC) $(OBJ)/*.o -o bin/shell $(LFLAGS)
+	@echo -e "\nListo. El programa se encuentra en el directorio bin"
 
-shell.o: src/shell.c
-	$(CC) $(CFLAGS) $^ -o lib/$@
+%.o: $(SRC)/%.c
+	@echo "Compilando $(<)"
+	@if [ ! -d "$(OBJ)" ]; then mkdir $(OBJ); fi
+	@$(CC) $(CFLAGS) $< -o $(OBJ)/$@ -I $(INC)
 
 clean:
-	rm -vf bin/*
-
-cleanall:
-	rm -vf bin/* lib/*.o
-
-exec:
-	bin/shell.bin
+	@rm -vf bin/* obj/*.o
